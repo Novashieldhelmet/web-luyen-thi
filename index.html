@@ -2414,7 +2414,7 @@ async function handleFileUpload(i) {
         function toggleAccessList() { const v=document.getElementById('input-status').value; document.getElementById('access-list-container').className = v==='restricted'?'block pt-3 border-t':'hidden pt-3 border-t'; if(v==='restricted') renderAccessCheckboxes(); }
         function renderAccessCheckboxes(sIds = []) { const c = document.getElementById('student-checkbox-list'); c.innerHTML = ''; if(allStudents.length===0) c.innerHTML='<p class="text-xs italic">Không có học sinh</p>'; allStudents.forEach(s => { c.innerHTML += `<div class="flex items-center gap-2 p-1"><input type="checkbox" value="${s.id}" class="acc-check w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary" ${sIds.includes(s.id)?'checked':''}> <span class="truncate">${s.email}</span></div>`; }); }
         async function loadStudentHistory() { const l=document.getElementById('global-loader'); l.classList.remove('hidden'); navigateTo('student-history'); const b=document.getElementById('student-history-body'); b.innerHTML=''; try{ const s=await db.collection('results').where('userId','==',currentUser.uid).get(); const docs=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)); docs.forEach(r=>{ b.innerHTML+=`<tr class="hover:bg-slate-50 border-b last:border-0 transition"><td class="p-4 font-bold text-slate-800">${r.examTitle||'--'}</td><td class="p-4 text-center"><span class="font-black ${r.score>=5?'text-emerald-600':'text-rose-500'} bg-slate-100 px-2 py-1 rounded">${r.score}</span></td><td class="p-4 text-center text-xs uppercase font-bold text-slate-400">${r.mode==='practice'?'Luyện tập':'Thi chuẩn'}</td><td class="p-4 text-right text-slate-500 text-xs">${new Date(r.createdAt).toLocaleDateString('vi-VN')}</td><td class="p-4 text-right"><button onclick='reviewResult(${JSON.stringify({id:r.id,...r})})' class="text-xs bg-white border hover:border-primary hover:text-primary px-3 py-1.5 rounded-lg font-bold shadow-sm">Xem</button></td></tr>`; }); }catch(e){} finally{l.classList.add('hidden');} }
-        async function reviewResult(r){ const l=document.getElementById('global-loader'); l.classList.remove('hidden'); try{ const ed=await db.collection('exams').doc(r.examId).get(); if(!ed.exists) return alert("Đề gốc đã xóa"); const ex=ed.data(); const ua=r.answers||{}; document.getElementById('review-score').innerText=r.score; const c=document.getElementById('review-questions-container'); c.innerHTML=''; ex.questions.forEach((q,i)=>{ const el=document.createElement('div'); el.className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm"; let imgHtml = q.image ? `<div class="mb-4"><img src="${q.image}" class="max-h-48 rounded-lg shadow-sm cursor-zoom-in" onclick="openLightbox(this.src)"></div>` : ''; let ct=`${imgHtml}<div class="mb-4 font-bold text-slate-700 text-lg">Câu ${i+1}: ${q.text}</div>`; if(q.type==='mc'){ const uC=ua[i],cor=q.correct; q.options.forEach((o,oi)=>{ let st="border-slate-200 text-slate-500"; if(oi===cor)st="opt-correct bg-emerald-50 border-emerald-400"; if(oi===uC && uC!==cor)st="opt-wrong bg-rose-50 border-rose-400"; ct+=`<div class="p-3 rounded-xl border ${st} mb-2 font-medium text-sm flex gap-3 items-center"><span class="w-6 h-6 flex items-center justify-center rounded-full bg-white border text-xs font-bold shadow-sm">${String.fromCharCode(65+oi)}</span>${o.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`; }); } else if (q.type ==='fb') { ct += `<div class="p-4 bg-slate-50 rounded-xl text-sm"><span class="font-bold text-emerald-600">Đáp án:</span> ${q.text}</div>`; } else { ct+=`<div class="grid grid-cols-3 bg-slate-100 p-2 rounded-t-lg text-xs font-black uppercase text-slate-400"><div class="col-span-1">Ý</div><div class="text-center">Chọn</div><div class="text-center">Đáp án</div></div>`; q.items.forEach((it,ix)=>{ const u=ua[i]?.[ix]; const isR=u===it.isTrue; ct+=`<div class="grid grid-cols-3 p-3 border-b last:border-0 border-slate-100 text-sm font-medium ${isR?'bg-emerald-50/30':'bg-rose-50/30'}"><div class="text-center ${isR?'text-emerald-600':'text-rose-500'} font-bold">${u===undefined?'--':(u?'Đ':'S')}</div><div class="text-center text-blue-600 font-bold">${it.isTrue?'Đ':'S'}</div></div>`; }); } el.innerHTML=ct; c.appendChild(el); 
+        async function reviewResult(r){ const l=document.getElementById('global-loader'); l.classList.remove('hidden'); try{ const ed=await db.collection('exams').doc(r.examId).get(); if(!ed.exists) return alert("Đề gốc đã xóa"); const ex=ed.data(); const ua=r.answers||{}; document.getElementById('review-score').innerText=r.score; const c=document.getElementById('review-questions-container'); c.innerHTML=''; ex.questions.forEach((q,i)=>{ const el=document.createElement('div'); el.className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm"; let imgHtml = q.image ? `<div class="mb-4"><img src="${q.image}" class="max-h-48 rounded-lg shadow-sm cursor-zoom-in" onclick="openLightbox(this.src)"></div>` : ''; let ct=`${imgHtml}<div class="mb-4 font-bold text-slate-700 text-lg">Câu ${i+1}: ${q.text}</div>`; if(q.type==='mc'){ const uC=ua[i],cor=q.correct; q.options.forEach((o,oi)=>{ let st="border-slate-200 text-slate-500"; if(oi===cor)st="opt-correct bg-emerald-50 border-emerald-400"; if(oi===uC && uC!==cor)st="opt-wrong bg-rose-50 border-rose-400"; ct+=`<div class="p-3 rounded-xl border ${st} mb-2 font-medium text-sm flex gap-3 items-center"><span class="w-6 h-6 flex items-center justify-center rounded-full bg-white border text-xs font-bold shadow-sm">${String.fromCharCode(65+oi)}</span>${o.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`; }); } else if (q.type ==='fb') { ct += `<div class="p-4 bg-slate-50 rounded-xl text-sm"><span class="font-bold text-emerald-600">Đáp án:</span> ${q.text}</div>`; } else { ct+=`<div class="grid grid-cols-12 bg-slate-100 p-2 rounded-t-lg text-xs font-black uppercase text-slate-400"><div class="col-span-8">Ý</div><div class="col-span-2 text-center">Chọn</div><div class="col-span-2 text-center">Đáp án</div></div>`; q.items.forEach((it,ix)=>{ const u=ua[i]?.[ix]; const isR=u===it.isTrue; ct+=`<div class="grid grid-cols-12 p-3 border-b last:border-0 border-slate-100 text-sm font-medium items-center ${isR?'bg-emerald-50/30':'bg-rose-50/30'}"><div class="col-span-8 text-slate-700 pr-2 leading-relaxed"><b>${String.fromCharCode(97+ix)})</b> ${it.text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div><div class="col-span-2 text-center ${isR?'text-emerald-600':'text-rose-500'} font-bold">${u===undefined?'--':(u?'Đ':'S')}</div><div class="col-span-2 text-center text-blue-600 font-bold">${it.isTrue?'Đ':'S'}</div></div>`; }); } el.innerHTML=ct; c.appendChild(el); 
     }); 
     navigateTo('review-detail'); 
     
@@ -3537,7 +3537,7 @@ async function loadSpinHistory() {
 // TÍNH NĂNG XUẤT FILE (PDF & WORD)
 // ==========================================
 
-function generatePrintableHTML() {
+function generatePrintableHTML(exportType = 'pdf') {
     const title = document.getElementById('input-title').value || 'De_Thi_EzTest';
     const subject = document.getElementById('input-subject').value || 'KHÁC';
     const duration = document.getElementById('input-duration').value || '45';
@@ -3565,10 +3565,18 @@ function generatePrintableHTML() {
         if (q.passage && q.passage.trim() !== '') {
             html += `<div style="margin-bottom: 10px; padding: 10px; border: 1px dashed #333; background: #fafafa;"><b>Dựa vào thông tin dưới đây:</b><br>${q.passage.replace(/\n/g, '<br>')}</div>`;
         }
+        
         let questionText = q.text.replace(/\n/g, '<br>');
+        
+        // Xử lý hiện đáp án cho câu điền từ
         if (q.type === 'fb') {
-            questionText = questionText.replace(/\[.*?\]/g, '....................');
+            if (exportType === 'word') {
+                questionText = questionText.replace(/\[(.*?)\]/g, '<b>[$1]</b>'); // Hiển thị rõ đáp án Word
+            } else {
+                questionText = questionText.replace(/\[(.*?)\]/g, '<b style="color: #ef4444;">$1</b>'); // In đỏ cho PDF
+            }
         }
+        
         html += `<div style="margin-bottom: 5px;"><b>Câu ${i + 1}:</b> ${questionText}</div>`;
 
         if (q.image) {
@@ -3578,14 +3586,34 @@ function generatePrintableHTML() {
         if (q.type === 'mc') {
             html += `<table style="width: 100%; border: none;"><tr>`;
             q.options.forEach((opt, oIdx) => {
-                html += `<td style="vertical-align: top; padding: 5px 0; width: 50%;"><b>${String.fromCharCode(65 + oIdx)}.</b> ${opt.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</td>`;
+                let isCorrect = (q.correct === oIdx);
+                let prefix = "";
+                let style = "vertical-align: top; padding: 5px 0; width: 50%;";
+
+                // Đánh dấu đáp án
+                if (isCorrect) {
+                    if (exportType === 'word') prefix = "*";
+                    else if (exportType === 'pdf') style += " color: #ef4444; font-weight: bold;"; // Màu đỏ
+                }
+
+                html += `<td style="${style}"><b>${prefix}${String.fromCharCode(65 + oIdx)}.</b> ${opt.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</td>`;
                 if ((oIdx + 1) % 2 === 0 && oIdx !== 3) html += `</tr><tr>`;
             });
             html += `</tr></table>`;
         } else if (q.type === 'tf') {
             html += `<ul style="list-style-type: none; padding-left: 20px; margin: 5px 0;">`;
             q.items.forEach((item, iIdx) => {
-                html += `<li style="margin-bottom: 5px;"><b>${String.fromCharCode(97 + iIdx)})</b> ${item.text.replace(/</g, '&lt;').replace(/>/g, '&gt;')} ...............(Đ/S)</li>`;
+                let isCorrect = item.isTrue;
+                let prefix = "";
+                let style = "margin-bottom: 5px;";
+
+                // Đánh dấu đáp án
+                if (isCorrect) {
+                    if (exportType === 'word') prefix = "*";
+                    else if (exportType === 'pdf') style += " color: #ef4444; font-weight: bold;";
+                }
+
+                html += `<li style="${style}"><b>${prefix}${String.fromCharCode(97 + iIdx)})</b> ${item.text.replace(/</g, '&lt;').replace(/>/g, '&gt;')} ...............(Đ/S)</li>`;
             });
             html += `</ul>`;
         }
@@ -3603,7 +3631,7 @@ function exportToPDF() {
     document.querySelector('#global-loader p').innerText = "Đang tạo file PDF...";
     l.classList.remove('hidden');
 
-    const { html, title } = generatePrintableHTML();
+    const { html, title } = generatePrintableHTML('pdf'); // <-- Đã sửa
     const element = document.createElement('div');
     element.innerHTML = html;
     document.body.appendChild(element);
@@ -3633,7 +3661,6 @@ function exportToPDF() {
     }
 }
 
-f// Hàm 3: Xuất ra Word (.doc) - Đã Fix Lỗi Công Thức Toán
 async function exportToWord() {
     if (editorQuestions.length === 0) return alert("Đề thi đang trống, không có gì để xuất!");
     
@@ -3642,42 +3669,32 @@ async function exportToWord() {
     l.classList.remove('hidden');
 
     try {
-        const { html, title } = generatePrintableHTML();
+        const { html, title } = generatePrintableHTML('word'); // <-- Đã sửa
 
-        // 1. Tạo một thẻ div ẩn để MathJax vẽ công thức ra trước
         const element = document.createElement('div');
         element.style.position = 'absolute';
         element.style.left = '-9999px';
         element.innerHTML = html;
         document.body.appendChild(element);
 
-        // 2. Chờ MathJax xử lý
         if (window.MathJax) {
             await MathJax.typesetPromise([element]);
-
-            // 3. THỦ THUẬT CHO MS WORD:
-            // MS Word không hiểu các thẻ HTML rối rắm của MathJax, nhưng nó hiểu rất rõ chuẩn thẻ <math> (MathML).
-            // Ta sẽ trích xuất thẻ <math> ẩn mà MathJax đã tạo ra, và loại bỏ phần đồ họa web đi.
             const mjxContainers = element.querySelectorAll('mjx-container');
             mjxContainers.forEach(mjx => {
                 const mathml = mjx.querySelector('mjx-assistive-mml math, math');
                 if (mathml) {
-                    // Cấp thẻ nhận diện chuẩn Toán học cho Word
                     if (!mathml.getAttribute('xmlns')) {
                         mathml.setAttribute('xmlns', 'http://www.w3.org/1998/Math/MathML');
                     }
-                    mathml.removeAttribute('display'); // Xóa thuộc tính ẩn
-                    // Thay thế toàn bộ cụm MathJax bằng thẻ math nguyên bản
+                    mathml.removeAttribute('display'); 
                     mjx.parentNode.replaceChild(mathml, mjx);
                 }
             });
         }
 
-        // 4. Lấy lại chuỗi HTML đã được làm sạch chứa công thức chuẩn Word
         const cleanHTML = element.innerHTML;
         document.body.removeChild(element);
 
-        // 5. Bọc HTML vào khung cấu trúc của MS Word (Thêm xmlns:m để hỗ trợ Office Math)
         const header = `
             <html xmlns:o='urn:schemas-microsoft-com:office:office' 
                   xmlns:w='urn:schemas-microsoft-com:office:word' 
@@ -3691,7 +3708,6 @@ async function exportToWord() {
         const footer = "</body></html>";
         const sourceHTML = header + cleanHTML + footer;
 
-        // 6. Kích hoạt tải xuống
         const blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -3700,7 +3716,6 @@ async function exportToWord() {
         document.body.appendChild(link);
         link.click();
         
-        // Dọn dẹp
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
 
@@ -3712,7 +3727,6 @@ async function exportToWord() {
         document.querySelector('#global-loader p').innerText = "Đang xử lý...";
     }
 }
-
     </script>
 </body>
 </html>
