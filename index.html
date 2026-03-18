@@ -16,27 +16,26 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        primary: '#d32f2f',      // Đỏ tươi
-                        primaryHover: '#b71c1c', // Đỏ sẫm
-                        secondary: '#ffd700',    // Vàng kim
-                        bgLight: '#fffce0',      // Nền kem vàng
+                    colors: { // Đã sửa lỗi lặp 2 lần chữ colors ở đây
+                        primary: '#0ea5e9',      // Xanh Cyber (Cyan/Sky)
+                        primaryHover: '#0284c7', // Xanh đậm
+                        secondary: '#8b5cf6',    // Tím Neon
+                        bgLight: '#0f172a',      // Đổi nền web sang xanh đen Cyberpunk
                         card: '#ffffff',
-                        'tet-red': '#990000',
                     },
                     fontFamily: { sans: ['Inter', 'Segoe UI', 'sans-serif'] },
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-out forwards',
                         'slide-up': 'slideUp 0.4s ease-out forwards',
-                        'spin-slow': 'spin-slow 10s linear infinite',
-                        'swing-gentle': 'swingGentle 3s ease-in-out infinite alternate',
-                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'spin-slow': 'spin 8s linear infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
                         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
                         slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
-                        swingGentle: { '0%': { transform: 'rotate(-3deg)' }, '100%': { transform: 'rotate(3deg)' } },
-                        glow: { '0%': { boxShadow: '0 0 5px #ffd700' }, '100%': { boxShadow: '0 0 20px #ffd700, 0 0 30px #ffed4a' } }
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+                        pulseGlow: { '0%, 100%': { opacity: '1', filter: 'drop-shadow(0 0 10px rgba(14,165,233,0.8))' }, '50%': { opacity: '.5', filter: 'drop-shadow(0 0 2px rgba(14,165,233,0.3))' } }
                     }
                 }
             }
@@ -230,61 +229,44 @@ body {
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
 }
-/* --- TẾT THEME EXTRAS --- */
-    .tet-pattern {
-        background-color: #fff7ed;
-        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23fca5a5' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+/* --- TECH 4.0 ANIMATED BACKGROUND --- */
+    body {
+        background: linear-gradient(45deg, #0f172a, #1e293b, #0f172a, #020617);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
     }
 
-    .petal {
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .tech-pattern::after {
+        content: '';
         position: fixed;
-        top: -10px;
-        z-index: 9999;
+        inset: 0;
+        background-image: 
+            linear-gradient(to right, rgba(14, 165, 233, 0.07) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(14, 165, 233, 0.07) 1px, transparent 1px);
+        background-size: 40px 40px;
+        z-index: -1;
         pointer-events: none;
-        animation: fall linear forwards;
+        animation: gridMove 20s linear infinite;
     }
 
-    @keyframes fall {
-        to { transform: translateY(100vh) rotate(720deg); }
+    @keyframes gridMove {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(40px); }
     }
 
-    /* Đổi màu thanh cuộn sang đỏ/vàng */
-    ::-webkit-scrollbar-thumb { background: #fca5a5; } 
-    ::-webkit-scrollbar-thumb:hover { background: #dc2626; }
-
-    /* Trang trí đèn lồng (CSS thuần) */
-/* --- SỬA LẠI: LỒNG ĐÈN MINI (KHÔNG CHE LOGO) --- */
-    .lantern {
-        position: fixed;
-        top: -5px; /* Treo cao hơn chút */
-        width: 40px;  /* Giảm từ 60px -> 40px */
-        height: 36px; /* Giảm từ 50px -> 36px */
-        background: #dc2626;
-        border-radius: 8px;
-        z-index: 50; /* Tăng Z-index để ko bị chìm */
-        box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4);
-        animation: swing 3s ease-in-out infinite alternate;
-        transform-origin: top center;
-    }
-    .lantern::before { /* Dây treo */
-        content: ''; position: absolute; top: -15px; left: 19px; /* Căn giữa */
-        width: 2px; height: 15px; background: #b91c1c;
-    }
-    .lantern::after { /* Tua rua */
-        content: ''; position: absolute; bottom: -12px; left: 10px; /* Căn giữa */
-        width: 20px; height: 12px;
-        border-left: 2px solid #fbbf24; border-right: 2px solid #fbbf24; border-bottom: 2px solid #fbbf24;
-    }
-    .lantern-text {
-        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-        color: #fbbf24; font-weight: bold; 
-        font-size: 12px; /* Chữ nhỏ lại */
-        white-space: nowrap;
-    }
-
-    @keyframes swing {
-        0% { transform: rotate(-5deg); }
-        100% { transform: rotate(5deg); }
+    /* Hiệu ứng kính (Glassmorphism) cực sâu */
+    .glass { 
+        background: rgba(255, 255, 255, 0.85) !important; 
+        backdrop-filter: blur(16px) saturate(180%); 
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important; 
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
     }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
@@ -309,26 +291,20 @@ body {
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
-<body class="bg-bgLight text-slate-800 min-h-screen font-sans pb-24 selection:bg-red-200 selection:text-red-700 tet-pattern">
+<body class="bg-bgLight text-slate-800 min-h-screen font-sans pb-24 selection:bg-sky-200 selection:text-sky-800 tech-pattern">
 
 
-   <div class="hidden md:block">
-        <div class="lantern" style="left: 22%; animation-delay: 0s;"><div class="lantern-text">TẾT</div></div>
-        <div class="lantern" style="left: 28%; animation-delay: 1s;"><div class="lantern-text">VUI</div></div>
-        
-        <div class="lantern" style="right: 28%; animation-delay: 0.5s;"><div class="lantern-text">PHÚ</div></div>
-        <div class="lantern" style="right: 22%; animation-delay: 1.5s;"><div class="lantern-text">QUÝ</div></div>
-    </div>
-    </div>
+  
     <header class="glass sticky top-0 z-40 shadow-sm border-b border-red-100">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3 cursor-pointer group" onclick="navigateTo('dashboard')">
-                <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-yellow-500 text-white rounded-xl flex items-center justify-center shadow-lg shadow-red-500/30 group-hover:scale-105 transition-transform duration-300">
-                    <i data-lucide="flower-2" width="24"></i> </div>
+<div class="flex items-center gap-3 cursor-pointer group" onclick="navigateTo('dashboard')">
+                <div class="w-10 h-10 bg-gradient-to-br from-primary to-indigo-600 text-white rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(14,165,233,0.5)] group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+                    <i data-lucide="cpu" width="24" class="animate-pulse"></i> 
+                </div>
                 <div class="hidden sm:block">
-                    <h1 class="text-xl font-black tracking-tight text-red-700 leading-none">EzTest</h1>
-                    <span class="text-xs font-bold text-yellow-600 tracking-widest uppercase">Xuân BÍNH NGỌ</span>
+                    <h1 class="text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-indigo-600 leading-none">EzTest</h1>
+                    <span class="text-[10px] font-black text-indigo-500 tracking-[0.2em] uppercase">Tech 4.0</span>
                 </div>
             </div>
             
@@ -730,6 +706,15 @@ body {
                             <div id="access-list-container" class="hidden pt-2 border-t"><label class="text-xs font-bold text-slate-400 mb-2 block">Chọn học sinh:</label><div id="student-checkbox-list" class="max-h-48 overflow-y-auto space-y-1 custom-scrollbar"></div></div>
                         </div>
                         <button onclick="saveExamToFirestore()" class="w-full py-4 bg-gradient-to-r from-primary to-indigo-600 text-white rounded-2xl font-bold shadow-lg hover:shadow-indigo-300 transform hover:-translate-y-1 transition-all flex justify-center items-center gap-2 text-lg"><i data-lucide="save"></i> LƯU ĐỀ THI</button>
+                        
+                        <div class="grid grid-cols-2 gap-3 mt-4">
+                            <button onclick="exportToPDF()" class="w-full py-3 bg-red-50 text-red-600 rounded-xl font-bold shadow-sm border border-red-200 hover:bg-red-100 transition-all flex justify-center items-center gap-2 text-sm">
+                                <i data-lucide="file-text" width="18"></i> Xuất PDF
+                            </button>
+                            <button onclick="exportToWord()" class="w-full py-3 bg-blue-50 text-blue-600 rounded-xl font-bold shadow-sm border border-blue-200 hover:bg-blue-100 transition-all flex justify-center items-center gap-2 text-sm">
+                                <i data-lucide="file-down" width="18"></i> Xuất Word
+                            </button>
+                        </div>
                     </div>
                     <div class="lg:col-span-2 relative">
                         <div id="questions-container" class="space-y-6 pb-32"></div>
@@ -869,12 +854,13 @@ body {
         </div>
     </div>
 </div>
-<div id="lucky-wheel-btn" class="fixed bottom-24 right-4 z-40 w-16 h-20 cursor-pointer hover:scale-110 transition-transform touch-none select-none" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
-    <div class="absolute inset-0 bg-red-600 rounded-lg animate-float border-2 border-yellow-400 flex flex-col items-center justify-center overflow-hidden">
-        <div class="absolute -top-4 w-12 h-12 bg-red-700 rounded-full border border-yellow-400"></div> <div class="z-10 text-yellow-300 font-bold text-[10px] mt-2">LÌ XÌ</div>
-        <i data-lucide="coins" class="text-yellow-300 w-6 h-6 fill-yellow-300 animate-pulse mt-1"></i>
+<div id="lucky-wheel-btn" class="fixed bottom-24 right-6 z-40 w-16 h-16 cursor-pointer hover:scale-110 transition-transform touch-none select-none group">
+    <div class="absolute inset-0 bg-gradient-to-tr from-primary to-secondary rounded-full animate-spin-slow opacity-60 blur-xl group-hover:opacity-100 transition-opacity duration-500"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-slate-900 to-indigo-900 rounded-full border-2 border-primary flex flex-col items-center justify-center shadow-[0_0_20px_rgba(14,165,233,0.6)] z-10 overflow-hidden">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMSI+PC9yZWN0Pgo8L3N2Zz4=')] opacity-20"></div>
+        <i data-lucide="aperture" class="text-primary w-8 h-8 animate-[spin_4s_linear_infinite] animate-pulse-glow"></i>
     </div>
-    <span id="spin-count-badge" class="absolute -top-2 -right-2 bg-yellow-500 text-red-700 text-[10px] font-black px-2 py-0.5 rounded-full border border-white shadow-sm z-50">0</span>
+    <span id="spin-count-badge" class="absolute -top-2 -right-2 bg-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full border border-indigo-400 shadow-[0_0_10px_rgba(99,102,241,0.8)] z-50 animate-bounce">0</span>
 </div>
 
 <div id="wheel-modal" class="hidden fixed inset-0 z-[80] modal flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
@@ -1696,12 +1682,25 @@ await batch.commit();
             q.items.forEach((it, i) => { const ans = takeState.answers[takeState.currentQ]?.[i]; h += `<div class="grid grid-cols-10 border-b last:border-0 p-3 items-center hover:bg-slate-50 transition"><div class="col-span-6 font-medium text-slate-700 text-sm pr-2"><b>${String.fromCharCode(97+i)})</b> ${it.text}</div><div class="col-span-2 flex justify-center"><input type="radio" name="tq_${i}" ${ans===true?'checked':''} onclick="saveAns(${i},true)" class="w-5 h-5 accent-emerald-500 cursor-pointer"></div><div class="col-span-2 flex justify-center"><input type="radio" name="tq_${i}" ${ans===false?'checked':''} onclick="saveAns(${i},false)" class="w-5 h-5 accent-rose-500 cursor-pointer"></div></div>`; });
             optionsEl.innerHTML = h + '</div>';
         } else {
-            q.options.forEach((o, i) => {
-                const sel = takeState.answers[takeState.currentQ] === i; const isWrong = mode === 'practice' && takeState.practiceLog[takeState.currentQ]?.lastWrong === i; const isCorrect = mode === 'practice' && takeState.practiceLog[takeState.currentQ]?.isCorrect && q.correct === i;
-                let cls = `p-3 sm:p-4 rounded-xl border cursor-pointer flex items-start transition mb-2 group relative overflow-hidden text-sm `;
-                if (isCorrect) cls += `opt-correct`; else if (isWrong) cls += `shake-element opt-wrong`; else if (sel) cls += `border-primary bg-indigo-50 ring-1 ring-primary`; else cls += `border-slate-200 bg-white hover:bg-slate-50 hover:border-indigo-200`;
-                optionsEl.innerHTML += `<div id="opt-${i}" class="${cls}" onclick="if('${mode}'!=='practice'||!document.getElementById('btn-next-q').style.display.includes('flex')){takeState.answers[takeState.currentQ]=${i};renderTakeUI()}"><span class="font-bold mr-3 w-6 h-6 rounded flex-shrink-0 flex items-center justify-center text-xs transition ${sel||isCorrect?'bg-primary border-primary text-white':'bg-slate-100 text-slate-500'}">${String.fromCharCode(65+i)}<span class="text-slate-700 font-medium leading-relaxed">${o.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span></div>`;
-            });
+           q.options.forEach((o, i) => {
+            const sel = takeState.answers[takeState.currentQ] === i; 
+            const isWrong = mode === 'practice' && takeState.practiceLog[takeState.currentQ]?.lastWrong === i; 
+            const isCorrect = mode === 'practice' && takeState.practiceLog[takeState.currentQ]?.isCorrect && q.correct === i;
+            
+            let cls = `p-3 sm:p-4 rounded-xl border cursor-pointer flex items-start transition mb-2 group relative overflow-hidden text-sm `;
+            if (isCorrect) cls += `opt-correct shadow-[0_0_15px_rgba(16,185,129,0.3)]`; 
+            else if (isWrong) cls += `shake-element opt-wrong`; 
+            else if (sel) cls += `border-primary bg-sky-50 ring-1 ring-primary shadow-[0_0_15px_rgba(14,165,233,0.3)]`; 
+            else cls += `border-slate-200 bg-white hover:bg-slate-50 hover:border-sky-300 hover:shadow-md`;
+            
+            // ĐÃ FIX: Thêm </span> ngay sau ${String.fromCharCode(65+i)}
+            optionsEl.innerHTML += `<div id="opt-${i}" class="${cls}" onclick="if('${mode}'!=='practice'||!document.getElementById('btn-next-q').style.display.includes('flex')){takeState.answers[takeState.currentQ]=${i};renderTakeUI()}">
+                <span class="font-bold mr-3 w-6 h-6 rounded flex-shrink-0 flex items-center justify-center text-xs transition ${sel||isCorrect?'bg-primary border-primary text-white':'bg-slate-100 text-slate-500'}">
+                    ${String.fromCharCode(65+i)}
+                </span>
+                <span class="text-slate-700 font-medium leading-relaxed flex-1">${o.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+            </div>`;
+        });
         }
     }
     
@@ -3495,39 +3494,7 @@ async function loadSpinHistory() {
     }
 }
 
-function createPetal() {
-        const petal = document.createElement('div');
-        petal.classList.add('petal');
-        
-        // Random loại hoa: Mai (Vàng) hoặc Đào (Hồng)
-        const isOchna = Math.random() > 0.5;
-        petal.innerHTML = isOchna 
-            ? '<i data-lucide="flower" style="color: #fbbf24; fill: #fbbf24"></i>' // Mai vàng
-            : '<i data-lucide="flower" style="color: #fca5a5; fill: #fca5a5"></i>'; // Đào hồng
 
-        // Random vị trí và kích thước
-        petal.style.left = Math.random() * 100 + 'vw';
-        petal.style.opacity = Math.random();
-        const size = Math.random() * 15 + 10; // 10px - 25px
-        petal.style.fontSize = size + 'px';
-        
-        // Random thời gian rơi
-        const duration = Math.random() * 5 + 5; // 5s - 10s
-        petal.style.animationDuration = duration + 's';
-
-        document.body.appendChild(petal);
-        
-        // Render icon Lucide cho element mới tạo
-        lucide.createIcons();
-
-        // Xóa khi rơi xong
-        setTimeout(() => {
-            petal.remove();
-        }, duration * 1000);
-    }
-
-    // Tạo hoa liên tục
-    setInterval(createPetal, 600); // 0.6s rớt 1 bông
   function processJSONImport() {
     const text = document.getElementById('import-text').value.trim();
     if (!text) return alert("Vui lòng dán code JSON vào ô văn bản!");
@@ -3566,6 +3533,186 @@ function createPetal() {
         alert("❌ Code không hợp lệ! Vui lòng kiểm tra lại cú pháp (Thiếu dấu phẩy, ngoặc...).\nChi tiết lỗi: " + err.message);
     }
 }  
+// ==========================================
+// TÍNH NĂNG XUẤT FILE (PDF & WORD)
+// ==========================================
+
+function generatePrintableHTML() {
+    const title = document.getElementById('input-title').value || 'De_Thi_EzTest';
+    const subject = document.getElementById('input-subject').value || 'KHÁC';
+    const duration = document.getElementById('input-duration').value || '45';
+
+    let html = `
+        <div style="font-family: 'Times New Roman', Times, serif; color: #000; padding: 20px; line-height: 1.5; font-size: 12pt;">
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <tr>
+                    <td style="text-align: center; width: 40%; vertical-align: top;">
+                        <h4 style="margin: 0; font-size: 12pt;">TRƯỜNG / TRUNG TÂM..........</h4>
+                        <p style="margin: 5px 0 0 0; font-weight: bold; text-decoration: underline;">ĐỀ CHÍNH THỨC</p>
+                    </td>
+                    <td style="text-align: center; width: 60%; vertical-align: top;">
+                        <h3 style="margin: 0; font-size: 14pt;">KỲ THI KIỂM TRA ĐÁNH GIÁ NĂNG LỰC</h3>
+                        <h4 style="margin: 5px 0; font-size: 13pt;">Bài thi: ${subject.toUpperCase()}</h4>
+                        <p style="margin: 0; font-style: italic;">Thời gian làm bài: ${duration} phút (Không kể thời gian phát đề)</p>
+                    </td>
+                </tr>
+            </table>
+            <h2 style="text-align: center; font-size: 16pt; margin-bottom: 20px; text-transform: uppercase;">${title}</h2>
+    `;
+
+    editorQuestions.forEach((q, i) => {
+        html += `<div style="margin-bottom: 15px; page-break-inside: avoid;">`;
+        if (q.passage && q.passage.trim() !== '') {
+            html += `<div style="margin-bottom: 10px; padding: 10px; border: 1px dashed #333; background: #fafafa;"><b>Dựa vào thông tin dưới đây:</b><br>${q.passage.replace(/\n/g, '<br>')}</div>`;
+        }
+        let questionText = q.text.replace(/\n/g, '<br>');
+        if (q.type === 'fb') {
+            questionText = questionText.replace(/\[.*?\]/g, '....................');
+        }
+        html += `<div style="margin-bottom: 5px;"><b>Câu ${i + 1}:</b> ${questionText}</div>`;
+
+        if (q.image) {
+            html += `<div style="margin: 10px 0; text-align: center;"><img src="${q.image}" style="max-height: 250px; max-width: 90%; object-fit: contain;"></div>`;
+        }
+
+        if (q.type === 'mc') {
+            html += `<table style="width: 100%; border: none;"><tr>`;
+            q.options.forEach((opt, oIdx) => {
+                html += `<td style="vertical-align: top; padding: 5px 0; width: 50%;"><b>${String.fromCharCode(65 + oIdx)}.</b> ${opt.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</td>`;
+                if ((oIdx + 1) % 2 === 0 && oIdx !== 3) html += `</tr><tr>`;
+            });
+            html += `</tr></table>`;
+        } else if (q.type === 'tf') {
+            html += `<ul style="list-style-type: none; padding-left: 20px; margin: 5px 0;">`;
+            q.items.forEach((item, iIdx) => {
+                html += `<li style="margin-bottom: 5px;"><b>${String.fromCharCode(97 + iIdx)})</b> ${item.text.replace(/</g, '&lt;').replace(/>/g, '&gt;')} ...............(Đ/S)</li>`;
+            });
+            html += `</ul>`;
+        }
+        html += `</div>`;
+    });
+
+    html += `<div style="text-align: right; margin-top: 30px; font-weight: bold;">--- HẾT ---</div>`;
+    html += `</div>`;
+    return { html, title };
+}
+
+function exportToPDF() {
+    if (editorQuestions.length === 0) return alert("Đề thi đang trống, không có gì để xuất!");
+    const l = document.getElementById('global-loader');
+    document.querySelector('#global-loader p').innerText = "Đang tạo file PDF...";
+    l.classList.remove('hidden');
+
+    const { html, title } = generatePrintableHTML();
+    const element = document.createElement('div');
+    element.innerHTML = html;
+    document.body.appendChild(element);
+
+    const opt = {
+        margin:       10,
+        filename:     `${title || 'De_thi'}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    if (window.MathJax) {
+        MathJax.typesetPromise([element]).then(() => {
+            html2pdf().set(opt).from(element).save().then(() => {
+                document.body.removeChild(element);
+                l.classList.add('hidden');
+                document.querySelector('#global-loader p').innerText = "Đang xử lý...";
+            });
+        });
+    } else {
+        html2pdf().set(opt).from(element).save().then(() => {
+            document.body.removeChild(element);
+            l.classList.add('hidden');
+            document.querySelector('#global-loader p').innerText = "Đang xử lý...";
+        });
+    }
+}
+
+f// Hàm 3: Xuất ra Word (.doc) - Đã Fix Lỗi Công Thức Toán
+async function exportToWord() {
+    if (editorQuestions.length === 0) return alert("Đề thi đang trống, không có gì để xuất!");
+    
+    const l = document.getElementById('global-loader');
+    document.querySelector('#global-loader p').innerText = "Đang xử lý công thức toán cho Word...";
+    l.classList.remove('hidden');
+
+    try {
+        const { html, title } = generatePrintableHTML();
+
+        // 1. Tạo một thẻ div ẩn để MathJax vẽ công thức ra trước
+        const element = document.createElement('div');
+        element.style.position = 'absolute';
+        element.style.left = '-9999px';
+        element.innerHTML = html;
+        document.body.appendChild(element);
+
+        // 2. Chờ MathJax xử lý
+        if (window.MathJax) {
+            await MathJax.typesetPromise([element]);
+
+            // 3. THỦ THUẬT CHO MS WORD:
+            // MS Word không hiểu các thẻ HTML rối rắm của MathJax, nhưng nó hiểu rất rõ chuẩn thẻ <math> (MathML).
+            // Ta sẽ trích xuất thẻ <math> ẩn mà MathJax đã tạo ra, và loại bỏ phần đồ họa web đi.
+            const mjxContainers = element.querySelectorAll('mjx-container');
+            mjxContainers.forEach(mjx => {
+                const mathml = mjx.querySelector('mjx-assistive-mml math, math');
+                if (mathml) {
+                    // Cấp thẻ nhận diện chuẩn Toán học cho Word
+                    if (!mathml.getAttribute('xmlns')) {
+                        mathml.setAttribute('xmlns', 'http://www.w3.org/1998/Math/MathML');
+                    }
+                    mathml.removeAttribute('display'); // Xóa thuộc tính ẩn
+                    // Thay thế toàn bộ cụm MathJax bằng thẻ math nguyên bản
+                    mjx.parentNode.replaceChild(mathml, mjx);
+                }
+            });
+        }
+
+        // 4. Lấy lại chuỗi HTML đã được làm sạch chứa công thức chuẩn Word
+        const cleanHTML = element.innerHTML;
+        document.body.removeChild(element);
+
+        // 5. Bọc HTML vào khung cấu trúc của MS Word (Thêm xmlns:m để hỗ trợ Office Math)
+        const header = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+                  xmlns:w='urn:schemas-microsoft-com:office:word' 
+                  xmlns:m='http://schemas.microsoft.com/office/2004/12/omml'
+                  xmlns='http://www.w3.org/TR/REC-html40'>
+            <head>
+                <meta charset='utf-8'>
+                <title>${title}</title>
+            </head><body>
+        `;
+        const footer = "</body></html>";
+        const sourceHTML = header + cleanHTML + footer;
+
+        // 6. Kích hoạt tải xuống
+        const blob = new Blob(['\ufeff', sourceHTML], { type: 'application/msword' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${title || 'De_thi'}.doc`;
+        document.body.appendChild(link);
+        link.click();
+        
+        // Dọn dẹp
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+    } catch (error) {
+        console.error("Lỗi xuất Word:", error);
+        alert("Có lỗi xảy ra khi tạo file Word!");
+    } finally {
+        l.classList.add('hidden');
+        document.querySelector('#global-loader p').innerText = "Đang xử lý...";
+    }
+}
+
     </script>
 </body>
 </html>
